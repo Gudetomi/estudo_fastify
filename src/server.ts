@@ -1,5 +1,5 @@
-import 'dotenv/config'
 import fastify from 'fastify'
+import { env } from './env'
 //import da conexao com o banco
 import { randomUUID } from 'node:crypto'
 import { knex } from './database'
@@ -13,7 +13,7 @@ app.get('/', async () => {
   }).returning('*')
   return transaction
 }).listen({
-  port:3333
+  port:env.PORT
 }).then(() => {
   console.log('Server is running on port 3333')
 }).catch((err) => {
