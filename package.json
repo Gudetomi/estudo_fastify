@@ -5,7 +5,7 @@
   "main": "server.ts",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "knex" : "tsx ./node_modules/.bin/knex",
+    "knex": "tsx ./node_modules/.bin/knex",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/Gudetomi/estudo_fastify#readme",
   "dependencies": {
+    "dotenv": "^17.3.1",
     "fastify": "^5.7.4",
     "knex": "^3.1.0",
     "sqlite3": "^5.1.7"
