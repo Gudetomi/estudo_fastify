@@ -4,20 +4,38 @@ import { knex } from '../database'
 
 export async function transactionsRoutes(app: FastifyInstance) {
 
-  app.post('/', async (request) => {
+  app.post('/', async (request,reply) => {
     const createTransactionBodySchema = z.object({
       title: z.string(),
       amount: z.number(),
       type: z.enum(['credit', 'debit']),
     })
-    const body = createTransactionBodySchema.parse(request.body)
-    const transaction = await knex('transactions').insert({
+    const { title, amount, type } = createTransactionBodySchema.parse(request.body)
+    await knex('transactions').insert({
+
       id: crypto.randomUUID(),
-      title: body.title,
-      amount: body.type === 'credit' ? body.amount : -body.amount,
-    }).returning('*')
-    return transaction
+      title: title,
+      amount: type === 'credit' ? amount : amount * -1,
+    })
+    return reply.status(201).send('Transaction created successfully')
   })
 
+  app.get('/', async (request, reply) => {
+    const transactions = await knex('transactions').select('*')
+    return { transactions }
+  })
+
+  app.get('/:id', async (request, reply) => {
+    const getTransactionParamsSchema = z.object({
+      id: z.string().uuid(),
+    })
+    const { id } = getTransactionParamsSchema.parse(request.params)
+    const transaction = await knex('transactions').where('id', id).first()  
+    return { transaction }
+  })
+  app.get('/summary', async (request, reply) => {
+    const summary = await knex('transactions').sum('amount', { as: 'amount' }).first()
+    return { summary }
+  })  
   
 }
